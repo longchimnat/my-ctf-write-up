@@ -1,6 +1,8 @@
 
 # KPWhy
 
+![alt text](<Screenshot 2026-08-21 205509.png>)
+
 ## Summary
 
 `kpiman` is an unstripped ELF binary that reads a 44-byte "employee ID" and
@@ -99,4 +101,101 @@ Promotion code: brunner{y0ur_kp1s_ar3_n0t_l00king_gr8_buddy}
 
 ```
 brunner{y0ur_kp1s_ar3_n0t_l00king_gr8_buddy}
+```
+
+
+# Roadmap
+
+![alt text](<Screenshot 2026-08-21 211753.png>)
+
+## Summary
+
+An nginx `default.conf` implements a 41-step finite-state machine entirely
+in `map` directives: each character of the request path is extracted,
+substituted through a lookup table, and checked against a chain of
+checkpoint variables. No server needs to be run — the flag can be
+recovered purely by statically parsing the config.
+
+## Solution
+
+### Step 1: Understand the three layers of indirection
+
+- `$route` is the request path. `wp_XXXX` variables each pull out one
+  character by position (`~^.{N}(?<c>.)$`), one per byte of a 41-char route.
+- Each `wp_XXXX` is piped through `roadmap-badges.conf` (a per-character
+  substitution table, e.g. `a`→`7f`) into a `badge_YYYY` variable — the
+  "expected value" for that position.
+- A chain of `cp_XXXX` variables link together: each one is keyed on
+  `"${previous_checkpoint}:${badge_at_this_position}"` and only advances
+  to the next checkpoint on an exact match; anything else falls through
+  to `"DETOUR"`. The last checkpoint in the chain resolves to `CLEARED`,
+  which is required for `$access` (and the 200 response) to fire.
+
+Because each checkpoint's expected `badge:hex` pair is hardcoded in the
+map, the whole chain can be walked **backwards** from `CLEARED` to
+reconstruct, in order, which position each checkpoint checks and what
+character (via the reverse of the substitution table) is required there —
+without ever sending a request.
+
+```python
+import re
+
+conf = open('default.conf').read()
+badges_conf = open('roadmap-badges.conf').read()
+
+# 1. char -> hex substitution table
+badge_table = {m.group(1): m.group(2)
+               for m in re.finditer(r'"(.)" "([0-9a-f]{2})";', badges_conf)}
+hex_to_char = {v: k for k, v in badge_table.items()}
+
+# 2. wp_XXXX -> character position in the route
+wp_pos = {m.group(1): int(m.group(2))
+          for m in re.finditer(r'map \$route \$wp_(\w+) \{ default ""; "~\^\.\{(\d+)\}', conf)}
+
+# 3. badge_YYYY -> wp_XXXX (which position each badge reads)
+badge_to_wp = {m.group(2): m.group(1)
+               for m in re.finditer(r'map \$wp_(\w+) \$badge_(\w+) \{ include', conf)}
+
+# 4. checkpoint chain: map "${cp_A}:${badge_B}" $cp_C { default "DETOUR"; "chk_X:hex" "chk_Y"; }
+transitions = {}
+for m in re.finditer(
+        r'map "\$\{cp_(\w+)\}:\$\{badge_(\w+)\}" \$cp_(\w+) \{ default "DETOUR"; '
+        r'"(chk_\w+):([0-9a-f]{2})" "(chk_\w+|CLEARED)"; \}', conf):
+    in_cp, badge, out_cp, chk_from, hexval, chk_to = m.groups()
+    transitions[out_cp] = {'in_cp': in_cp, 'badge': badge, 'hex': hexval, 'chk_to': chk_to}
+
+# the chain's start has no incoming cp: map $badge_A $cp_B { default "DETOUR"; "hex" "chk_Y"; }
+m = re.search(r'map \$badge_(\w+) \$cp_(\w+) \{ default "DETOUR"; "([0-9a-f]{2})" "(chk_\w+)"; \}', conf)
+start_badge, start_cp, start_hex, start_chk_to = m.groups()
+transitions[start_cp] = {'in_cp': None, 'badge': start_badge, 'hex': start_hex, 'chk_to': start_chk_to}
+
+# 5. the checkpoint whose chk_to is CLEARED is the last step; walk backwards via in_cp
+final_cp = next(cp for cp, t in transitions.items() if t['chk_to'] == 'CLEARED')
+chain = []
+cur = final_cp
+while cur is not None:
+    chain.append(transitions[cur])
+    cur = transitions[cur]['in_cp']
+chain.reverse()
+
+# 6. each step -> (position in route, required character)
+result = {}
+for t in chain:
+    pos = wp_pos[badge_to_wp[t['badge']]]
+    result[pos] = hex_to_char[t['hex']]
+
+flag = ''.join(result[i] for i in range(max(result) + 1))
+print(flag)
+```
+
+Output:
+
+```
+brunner{c0rp0r4t3_r04dm4p_t0_ng1nx_h34rt}
+```
+
+## Flag
+
+```
+brunner{c0rp0r4t3_r04dm4p_t0_ng1nx_h34rt}
 ```
