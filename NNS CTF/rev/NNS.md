@@ -365,6 +365,8 @@ Btw this flag it encoded with the xor algorithm
 
 This challenge is a normal anti-debugging to make it why only debug wont make the result
 
+To know more about anti-debugging you can visit this site: https://anti-debug.checkpoint.com/
+
 ## Flag
 ```
 NNS{1_h0p3_y0u_p47ch3d_7h3_0pc0d3_dur1ng_run71m3_jnz_15_much_b3773r_7h4n_jz}
