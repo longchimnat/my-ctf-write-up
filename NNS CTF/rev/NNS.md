@@ -1,6 +1,6 @@
 # Flag pointer register
 ## Summary
-![alt text](image.png)
+![alt text](asset/image.png)
 ## Solution
 As they said that we need to use some debugger like gdb or IDA
 
@@ -26,18 +26,17 @@ void __noreturn start()
 
 After that I try to run it.
 
-![alt text](image-1.png)
+![alt text](asset/image-1.png)
 
 Press enter and nothing we can found from them
 
 Now head to use debug in IDA i set a breakpoint like this
 
-![](image-4.png)
+![NNS CTF/rev/asset/image-4.png](asset/image-4.png)
 
 And start debugging, after that in the file .exe press ENTER once then you get the flag
 
-![alt text](image-2.png)
-
+![NNS CTF/rev/asset/image-2.png](asset/image-2.png)
 To explain why RDX point to wrong buffer you can visit this website
 
 https://learn.microsoft.com/en-us/cpp/build/x64-calling-convention?view=msvc-170
@@ -51,7 +50,7 @@ NNS{r4x_h4d_7h3_fl4g_bu7_rdx_p01n73d_70_7h3_wr0ng_buff3r}
 
 # No Strings attached
 ## Summary
-![alt text](image-3.png)
+![NNS CTF/rev/asset/image-3.png](asset/image-3.png)
 
 ## Solution
 Here is the pseudocode of the main function:
@@ -109,11 +108,11 @@ So `ltrace` can output dynamic library calls so they can read parameter
 
 You see the visual picture here:
 
-![alt text](image-5.png)
+![NNS CTF/rev/asset/image-5.png](asset/image-5.png)
 
 Because the `ltrace` has limit the size of output so to extend, combine the command `-s` with number char* you want
 
-![alt text](image-6.png)
+![NNS CTF/rev/asset/image-6.png](asset/image-6.png)
 
 Want to know more about the `ltrace` you can visit this site: https://www.man7.org/linux/man-pages/man1/ltrace.1.html
 
@@ -126,7 +125,7 @@ NNS{n0_str1ngs_1n_7h3_b1n4ry_bu7_ltr4c3_s4w_7h3_c0mp4r3}
 
 # Open Secret
 ## Summary
-![alt text](image-7.png)
+![NNS CTF/rev/asset/image-7.png](asset/image-7.png)
 
 ## Solution 
 Let using `strace` (To get more info you can visit this site: https://www.man7.org/linux/man-pages/man1/strace.1.html )
@@ -135,7 +134,7 @@ First of all, the `strace` is the debugging tool that traces system calls and si
 
 Visual picture: 
 
-![alt text](image-8.png)
+![NNS CTF/rev/asset/image-8.png](asset/image-8.png)
 
 You can see this code
 ```
@@ -154,7 +153,7 @@ sudo ./open-secret
 
 If you can't execute the file just make sure you are in the folder have that file
 
-![alt text](image-9.png)
+![NNS CTF/rev/asset/image-9.png](asset/image-9.png)
 
 ## Flag
 ```
@@ -163,7 +162,7 @@ NNS{7h3_p47h_w4s_h1dd3n_bu7_s7r4c3_s4w_7h3_0p3n}
 
 # Scratch space
 ## Summary
-![alt text](image-10.png)
+![NNS CTF/rev/asset/image-10.png](asset/image-10.png)
 
 ## Solution
 Now we using the tool call `pwndbg` the extension of normal `gdb` to install it you can visit here:
@@ -290,7 +289,7 @@ Here is the code of main function:
 ```
 Now we gonna set the breakpoint in `*0x40126e`, after that run it and read the `$rbp-0x8` parameter to see what changed
 
-![alt text](image-11.png)
+![NNS CTF/rev/asset/image-11.png](asset/image-11.png)
 
 You can view `memory disclosure via process introspection` to see why it cant hide the password if the attacker have privilege the running process control 
 
@@ -302,7 +301,7 @@ NNS{s34rch3d_7h3_mm4p_b3f0r3_17_w4s_w1p3d}
 # Patch Tuesday
 ## Summary
 
-![alt text](image-12.png)
+![NNS CTF/rev/asset/image-12.png](asset/image-12.png)
 
 ## Solution
 Now we are using IDA to debug this file
@@ -344,15 +343,15 @@ xor     ecx, ecx        ; uExitCode
 
 Maybe this will have more detail
 
-![alt text](image-13.png)
+![NNS CTF/rev/asset/image-13.png](asset/image-13.png)
 
-![alt text](image-14.png)
+![alt text](asset/image-14.png)
 
 Let start debugging while debugging click `ENTER` the .exe to continue
 
 If you dont change the value of `ZF` it wont let us to get what we want so here to change
 
-![alt text](image-15.png)
+![NNS CTF/rev/asset/image-15.png](asset/image-15.png)
 
 You can see it will jump as the `ZF` value is 1 now we change it to zero 
 
@@ -360,9 +359,9 @@ After that press `F9` to get the flag
 
 Btw this flag it encoded with the xor algorithm
 
-![alt text](image-16.png)
+![NNS CTF/rev/asset/image-16.png](asset/image-16.png)
 
-![alt text](image-17.png)
+![NNS CTF/rev/asset/image-17.png](asset/image-17.png)
 
 This challenge is a normal anti-debugging to make it why only debug wont make the result
 
