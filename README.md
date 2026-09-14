@@ -13,4 +13,5 @@ and the challenge I solve from Other platforms challenge about ctf
 
 ## Other platforms
 
+- [Crackmes.one](./Crackmes.one/)
 - [Tryhackme](./Tryhackme/)
