@@ -372,6 +372,8 @@ To know more about anti-debugging you can visit this site: https://anti-debug.ch
 NNS{1_h0p3_y0u_p47ch3d_7h3_0pc0d3_dur1ng_run71m3_jnz_15_much_b3773r_7h4n_jz}
 ```
 
+# Time lock
+## Summary
 
 
 
