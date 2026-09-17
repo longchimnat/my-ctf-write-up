@@ -137,6 +137,8 @@ def key_for(name):
 
 ## Ví dụ
 
+![alt text](image-2.png)
+
 | Name | Key |
 |------|-----|
 | `Alice` | `KGM-130725CF` |
@@ -145,6 +147,8 @@ def key_for(name):
 | `admin` | `KGM-380F21C5` |
 
 Nhập Name vào ô 1, Key vào ô 2 → bấm Login → Success.
+
+![alt text](image-3.png)
 
 ## Kết luận
 
